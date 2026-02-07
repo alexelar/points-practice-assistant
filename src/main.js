@@ -1,0 +1,290 @@
+import { MicVAD } from "@ricky0123/vad-web";
+import { translations } from "./translations.js";
+import { Settings } from "./settings.js";
+
+class ExerciseAssistant {
+  constructor() {
+    this.initState();
+    this.settings = new Settings();
+    this.initUI();
+  }
+
+  initState() {
+    this.state = "idle";
+    this.cycleCount = 0;
+    this.isRunning = false;
+    this.vad = null;
+    this.voiceDetected = false;
+    this.wakeLock = null;
+    this.sessionStartTime = null;
+    this.durationInterval = null;
+    this.commandPath = "./assets/audio";
+    this.commands = {
+      inspect: { filename: "command1.mp3" },
+      find: { filename: "command2.mp3" },
+      touch: { filename: "command3.mp3" },
+      finger: { filename: "command4.mp3" },
+      body: { filename: "command5.mp3" },
+      temp: { filename: "command6.mp3" },
+      release: { filename: "command7.mp3" },
+    };
+    this.confirmations = [
+      { filename: "confirmation1.mp3" },
+      { filename: "confirmation2.mp3" },
+      { filename: "confirmation3.mp3" },
+      { filename: "confirmation4.mp3" },
+      { filename: "confirmation5.mp3" },
+    ];
+    this.audioCache = {};
+  }
+
+  initUI() {
+    this.startBtn = document.getElementById("startBtn");
+    this.stopBtn = document.getElementById("stopBtn");
+    this.statusEl = document.getElementById("status");
+    this.cycleCountEl = document.getElementById("cycleCount");
+    this.durationEl = document.getElementById("duration");
+    this.settingsBtn = document.getElementById("settingsBtn");
+    this.settingsModal = document.getElementById("settingsModal");
+
+    this.startBtn.addEventListener("click", () => this.startSession());
+    this.stopBtn.addEventListener("click", () => this.stopSession());
+    document.getElementById("language").addEventListener("change", (e) => {
+      this.settings.changeLanguage(e.target.value);
+      this.updateLanguage();
+    });
+
+    this.updateLanguage();
+  }
+
+  t(key) {
+    if (!key) return "";
+    return translations[this.settings.lang]?.[key] || key;
+  }
+
+  updateLanguage() {
+    document.documentElement.lang = this.settings.lang;
+    document.title = this.t("title");
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      if (el.dataset.i18n.length > 0) {
+        el.textContent = this.t(el.dataset.i18n);
+      }
+    });
+  }
+
+  async startSession() {
+    try {
+      this.updateUI(this.t("loading"));
+      await this.preloadAudio();
+      await this.initVAD();
+      await this.requestWakeLock();
+      this.isRunning = true;
+      this.cycleCount = 0;
+      this.sessionStartTime = Date.now();
+      this.startBtn.disabled = true;
+      this.stopBtn.disabled = false;
+      this.updateUI(this.t("sessionStarted"));
+      this.startDurationTimer();
+      this.runCycle();
+    } catch (err) {
+      if (err.name === 'NotAllowedError') {
+        alert(this.t("micRequired"));
+      } else if (err.name === 'NotFoundError') {
+        alert(this.t("micNotFound"));
+      } else {
+        alert(this.t("sessionError") + ": " + err.message);
+      }
+    }
+  }
+
+  stopSession() {
+    this.isRunning = false;
+    this.startBtn.disabled = false;
+    this.stopBtn.disabled = true;
+    this.updateUI(this.t("sessionStopped"));
+    this.stopDurationTimer();
+    if (this.vad) {
+      this.vad.pause();
+    }
+    this.releaseWakeLock();
+  }
+
+  async initVAD() {
+    this.vad = await MicVAD.new({
+      baseAssetPath: "/assets/vad/",
+      onnxWASMBasePath: "/assets/vad/",
+      positiveSpeechThreshold: this.settings.positiveSpeechThreshold,
+      negativeSpeechThreshold: this.settings.negativeSpeechThreshold,
+      minSpeechMs: this.settings.minSpeechMs,
+      redemptionMs: this.settings.redemptionMs,
+      onSpeechRealStart: () => {
+        this.updateUI(this.t("voiceDetected"));
+      },
+      onSpeechEnd: () => {
+        this.voiceDetected = true;
+      }
+    });
+  }
+
+  async requestWakeLock() {
+    try {
+      if ("wakeLock" in navigator) {
+        this.wakeLock = await navigator.wakeLock.request("screen");
+      }
+    } catch (err) {
+      console.log("Wake Lock not supported:", err);
+    }
+  }
+
+  releaseWakeLock() {
+    if (this.wakeLock) {
+      this.wakeLock.release();
+      this.wakeLock = null;
+    }
+  }
+
+  async preloadAudio() {
+    const allFiles = [
+      ...Object.values(this.commands).map(c => c.filename),
+      ...this.confirmations.map(c => c.filename)
+    ];
+    
+    await Promise.all(allFiles.map(filename => {
+      return new Promise((resolve, reject) => {
+        const audio = new Audio(this.commandPath + "/" + filename);
+        audio.preload = "auto";
+        audio.oncanplaythrough = () => {
+          this.audioCache[filename] = audio;
+          resolve();
+        };
+        audio.onerror = reject;
+      });
+    }));
+  }
+
+  async runCycle() {
+    if (!this.isRunning) return;
+
+    this.cycleCount++;
+    this.cycleCountEl.textContent = this.cycleCount;
+
+    let commandsToPlay = [];
+
+    const shouldShuffle = this.cycleCount % this.settings.shuffleInterval === 0;
+    const feelCommands = [this.commands.finger, this.commands.body, this.commands.temp];
+    if (shouldShuffle) {
+      feelCommands.sort(() => Math.random() - 0.5);
+    }
+
+    if (this.cycleCount % this.settings.inspectBodyInterval === 1) {
+      commandsToPlay.push(this.commands.inspect);
+    }
+    commandsToPlay.push(this.commands.find);
+    if (this.settings.sessionMode !== "short") {
+      commandsToPlay.push(this.commands.touch);
+    }
+    commandsToPlay = commandsToPlay.concat(feelCommands);
+    commandsToPlay.push({ ...this.commands.release, ...{ deaf: this.settings.sessionMode === "short" }});
+
+    const fields = { filename: '', deaf: false };
+    while (this.isRunning && commandsToPlay.length > 0) {
+      const command = { ...fields, ...commandsToPlay.shift() };
+      await this.playCommandAndWait(command);
+    }
+
+    this.runCycle();
+  }
+
+  async playCommandAndWait(command) {
+    if (!this.isRunning) return;
+    await this.playCommand(command)
+    if (command.deaf) return;
+    const voiceDetected = await this.listenForVoice();
+    if (!voiceDetected) {
+      await this.playCommandAndWait(command);
+      return;
+    }
+    const confirmation = this.confirmations[Math.floor(Math.random() * this.confirmations.length)];
+    await this.playConfirmation(confirmation);
+  }
+
+  async playCommand(command) {
+    if (!this.isRunning) return;
+    this.updateUI(this.t("playingCommand"));
+    const audio = this.audioCache[command.filename].cloneNode();
+    audio.playbackRate = this.settings.playbackRate;
+    await audio.play();
+    await new Promise((resolve) => (audio.onended = resolve));
+  }
+
+  async playConfirmation(confirmation) {
+    if (!this.isRunning) return;
+    this.updateUI(this.t("confirmingCommand"));
+    const audio = this.audioCache[confirmation.filename].cloneNode();
+    audio.playbackRate = this.settings.playbackRate;
+    await audio.play();
+    await new Promise((resolve) => (audio.onended = resolve));
+  }
+
+  async listenForVoice() {
+    if (!this.isRunning) return false;
+    this.updateUI(this.t("listeningForVoice"));
+    this.voiceDetected = false; // Reset before starting
+    this.vad.start();
+    const result = await this.waitForVoice();
+    this.vad.pause();
+    return result;
+  }
+
+  async waitForVoice() {
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+      const timeout = this.settings.repeatTimeout * 1000;
+
+      const check = () => {
+        if (!this.isRunning || Date.now() - startTime > timeout) {
+          resolve(false);
+          return;
+        }
+
+        if (this.voiceDetected) {
+          resolve(true);
+          return;
+        }
+
+        requestAnimationFrame(check);
+      };
+
+      check();
+    });
+  }
+
+  startDurationTimer() {
+    this.updateDuration();
+    this.durationInterval = setInterval(() => this.updateDuration(), 1000);
+  }
+
+  stopDurationTimer() {
+    if (this.durationInterval) {
+      clearInterval(this.durationInterval);
+      this.durationInterval = null;
+    }
+  }
+
+  updateDuration() {
+    const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  updateUI(status) {
+    this.statusEl.textContent = status;
+  }
+}
+
+const app = new ExerciseAssistant();

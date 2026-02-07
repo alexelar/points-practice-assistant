@@ -1,0 +1,162 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: #111;
+    padding: 30px;
+    padding-top: 45px;
+    border-radius: 6px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.btn-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px 15px;
+    color: #fff;
+    transition: color 0.2s;
+}
+
+.btn-icon:hover {
+    color: #fff;
+}
+
+.status {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.btn-start {
+    background: #6b57ff77;
+    color: #fff;
+}
+
+.btn-start:hover:not(:disabled) {
+    background: #6b57ff99;
+}
+
+.btn-stop {
+    background: #FF579755;
+    color: #fff;
+}
+
+.btn-stop:hover:not(:disabled) {
+    background: #FF579777;
+}
+
+.progress {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.progress span {
+    color: #fff;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #111;
+    padding: 30px;
+    border-radius: 6px;
+    max-width: 400px;
+    width: 100%;
+    color: #fff;
+    max-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.modal-content select,
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background: #1a1a1a;
+    color: #fff;
+}
