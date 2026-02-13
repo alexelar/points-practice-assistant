@@ -110,9 +110,10 @@ class ExerciseAssistant {
   }
 
   async initVAD() {
+    const base = import.meta.env.BASE_URL;
     this.vad = await MicVAD.new({
-      baseAssetPath: "/assets/vad/",
-      onnxWASMBasePath: "/assets/vad/",
+      baseAssetPath: `${base}assets/vad/`,
+      onnxWASMBasePath: `${base}assets/vad/`,
       positiveSpeechThreshold: this.settings.positiveSpeechThreshold,
       negativeSpeechThreshold: this.settings.negativeSpeechThreshold,
       minSpeechMs: this.settings.minSpeechMs,
