@@ -215,6 +215,7 @@ class ExerciseAssistant {
     const audio = this.audioCache[command.filename];
     audio.playbackRate = this.settings.playbackRate;
     audio.currentTime = 0;
+    audio.volume = 1.0;
     await audio.play();
     await new Promise((resolve) => (audio.onended = resolve));
   }
@@ -225,6 +226,7 @@ class ExerciseAssistant {
     const audio = this.audioCache[confirmation.filename];
     audio.playbackRate = this.settings.playbackRate;
     audio.currentTime = 0;
+    audio.volume = 1.0;
     await audio.play();
     await new Promise((resolve) => (audio.onended = resolve));
   }
@@ -232,10 +234,12 @@ class ExerciseAssistant {
   async listenForVoice() {
     if (!this.isRunning) return false;
     this.updateUI(this.t("listeningForVoice"));
-    this.voiceDetected = false; // Reset before starting
+    this.voiceDetected = false;
+    await this.delay(100);
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
+    await this.delay(100);
     return result;
   }
 
