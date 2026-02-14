@@ -74,8 +74,11 @@ class ExerciseAssistant {
 
   async startSession() {
     try {
-      this.updateUI(this.t("loading"));
-      await this.preloadAudio();
+      if (Object.keys(this.audioCache).length === 0) {
+        this.updateUI(this.t("audioLoading"));
+        await this.preloadAudio();
+      }
+      this.updateUI(this.t("preparation"));
       await this.initVAD();
       await this.requestWakeLock();
       this.isRunning = true;
