@@ -76,15 +76,15 @@ class ExerciseAssistant {
 
   async startSession() {
     try {
-      if (Object.keys(this.audioCache).length === 0) {
-        this.updateUI(this.t("audioLoading"));
-        await this.preloadAudio();
-      }
       if (!this.audioContext) {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (this.audioContext.state === 'suspended') {
         await this.audioContext.resume();
+      }
+      if (Object.keys(this.audioCache).length === 0) {
+        this.updateUI(this.t("audioLoading"));
+        await this.preloadAudio();
       }
       this.updateUI(this.t("preparation"));
       await this.initVAD();
@@ -162,16 +162,11 @@ class ExerciseAssistant {
       ...this.confirmations.map(c => c.filename)
     ];
     
-    await Promise.all(allFiles.map(filename => {
-      return new Promise((resolve, reject) => {
-        const audio = new Audio(this.commandPath + "/" + filename);
-        audio.preload = "auto";
-        audio.oncanplaythrough = () => {
-          this.audioCache[filename] = audio;
-          resolve();
-        };
-        audio.onerror = reject;
-      });
+    await Promise.all(allFiles.map(async filename => {
+      const response = await fetch(this.commandPath + "/" + filename);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      this.audioCache[filename] = audioBuffer;
     }));
   }
 
@@ -225,16 +220,16 @@ class ExerciseAssistant {
     if (!this.isRunning) return;
     const startTime = performance.now();
     this.updateUI(this.t("playingCommand"));
-    const audio = this.audioCache[command.filename];
-    this.updateUI(`readyState: ${audio.readyState}, paused: ${audio.paused}`);
-    audio.load();
-    audio.playbackRate = this.settings.playbackRate;
-    audio.volume = 1.0;
+    const buffer = this.audioCache[command.filename];
+    const source = this.audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = this.settings.playbackRate;
+    source.connect(this.audioContext.destination);
     const playStart = performance.now();
-    await audio.play();
+    source.start(0);
     const playDelay = Math.round(performance.now() - playStart);
     this.updateUI(`Play delay: ${playDelay}ms`);
-    await new Promise((resolve) => (audio.onended = resolve));
+    await new Promise((resolve) => (source.onended = resolve));
     const totalTime = Math.round(performance.now() - startTime);
     this.updateUI(`Total: ${totalTime}ms`);
   }
@@ -243,16 +238,16 @@ class ExerciseAssistant {
     if (!this.isRunning) return;
     const startTime = performance.now();
     this.updateUI(this.t("confirmingCommand"));
-    const audio = this.audioCache[confirmation.filename];
-    this.updateUI(`CONF readyState: ${audio.readyState}, paused: ${audio.paused}`);
-    audio.load();
-    audio.playbackRate = this.settings.playbackRate;
-    audio.volume = 1.0;
+    const buffer = this.audioCache[confirmation.filename];
+    const source = this.audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = this.settings.playbackRate;
+    source.connect(this.audioContext.destination);
     const playStart = performance.now();
-    await audio.play();
+    source.start(0);
     const playDelay = Math.round(performance.now() - playStart);
     this.updateUI(`CONF Play delay: ${playDelay}ms`);
-    await new Promise((resolve) => (audio.onended = resolve));
+    await new Promise((resolve) => (source.onended = resolve));
     const totalTime = Math.round(performance.now() - startTime);
     this.updateUI(`CONF Total: ${totalTime}ms`);
   }
