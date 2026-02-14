@@ -129,6 +129,7 @@ class ExerciseAssistant {
         this.voiceDetected = true;
       }
     });
+    this.vad.pause();
   }
 
   async requestWakeLock() {
