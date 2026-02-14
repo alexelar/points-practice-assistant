@@ -44,13 +44,14 @@ export default defineConfig({
         "short_name": "Точки",
         "description": "Голосовой ассистент для упражнений с точками тела",
         "lang": "ru",
-        "start_url": "/",
+        "start_url": "./",
+        "scope": "./",
         "display": "standalone",
         "background_color": "#6b57ff",
         "theme_color": "#6b57ff",
         "icons": [
-          { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-          { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+          { "src": "./android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+          { "src": "./android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
         ]
       }
     }),
