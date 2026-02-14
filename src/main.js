@@ -54,6 +54,7 @@ class ExerciseAssistant {
       this.updateLanguage();
     });
 
+    document.getElementById("version").textContent = `v${__BUILD_TIME__}`;
     this.updateLanguage();
   }
 
