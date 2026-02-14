@@ -36,6 +36,7 @@ class ExerciseAssistant {
       { filename: "confirmation5.mp3" },
     ];
     this.audioCache = {};
+    this.audioContext = null;
   }
 
   initUI() {
@@ -78,6 +79,12 @@ class ExerciseAssistant {
       if (Object.keys(this.audioCache).length === 0) {
         this.updateUI(this.t("audioLoading"));
         await this.preloadAudio();
+      }
+      if (!this.audioContext) {
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
       }
       this.updateUI(this.t("preparation"));
       await this.initVAD();
@@ -216,6 +223,10 @@ class ExerciseAssistant {
 
   async playCommand(command) {
     if (!this.isRunning) return;
+    if (this.audioContext.state === 'suspended') {
+      this.updateUI("Resuming audio context...");
+      await this.audioContext.resume();
+    }
     this.updateUI(this.t("playingCommand"));
     const audio = this.audioCache[command.filename];
     audio.playbackRate = this.settings.playbackRate;
@@ -227,6 +238,10 @@ class ExerciseAssistant {
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
+    if (this.audioContext.state === 'suspended') {
+      this.updateUI("Resuming audio context...");
+      await this.audioContext.resume();
+    }
     this.updateUI(this.t("confirmingCommand"));
     const audio = this.audioCache[confirmation.filename];
     audio.playbackRate = this.settings.playbackRate;
@@ -238,13 +253,15 @@ class ExerciseAssistant {
 
   async listenForVoice() {
     if (!this.isRunning) return false;
-    await this.delay(300);
+    if (this.audioContext.state === 'running') {
+      this.updateUI("Suspending audio context...");
+      await this.audioContext.suspend();
+    }
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
-    await this.delay(300);
     return result;
   }
 
