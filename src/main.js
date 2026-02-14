@@ -87,7 +87,6 @@ class ExerciseAssistant {
         await this.audioContext.resume();
       }
       this.updateUI(this.t("preparation"));
-      await this.initVAD();
       await this.requestWakeLock();
       this.isRunning = true;
       this.cycleCount = 0;
@@ -115,12 +114,16 @@ class ExerciseAssistant {
     this.updateUI(this.t("sessionStopped"));
     this.stopDurationTimer();
     if (this.vad) {
-      this.vad.pause();
+      this.vad.destroy();
+      this.vad = null;
     }
     this.releaseWakeLock();
   }
 
   async initVAD() {
+    if (this.vad) {
+      this.vad.destroy();
+    }
     const base = import.meta.env.BASE_URL;
     this.vad = await MicVAD.new({
       baseAssetPath: `${base}assets/vad/`,
@@ -136,7 +139,6 @@ class ExerciseAssistant {
         this.voiceDetected = true;
       }
     });
-    this.vad.pause();
   }
 
   async requestWakeLock() {
@@ -223,10 +225,6 @@ class ExerciseAssistant {
 
   async playCommand(command) {
     if (!this.isRunning) return;
-    if (this.audioContext.state === 'suspended') {
-      this.updateUI("Resuming audio context...");
-      await this.audioContext.resume();
-    }
     this.updateUI(this.t("playingCommand"));
     const audio = this.audioCache[command.filename];
     audio.playbackRate = this.settings.playbackRate;
@@ -238,10 +236,6 @@ class ExerciseAssistant {
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
-    if (this.audioContext.state === 'suspended') {
-      this.updateUI("Resuming audio context...");
-      await this.audioContext.resume();
-    }
     this.updateUI(this.t("confirmingCommand"));
     const audio = this.audioCache[confirmation.filename];
     audio.playbackRate = this.settings.playbackRate;
@@ -253,15 +247,12 @@ class ExerciseAssistant {
 
   async listenForVoice() {
     if (!this.isRunning) return false;
-    if (this.audioContext.state === 'running') {
-      this.updateUI("Suspending audio context...");
-      await this.audioContext.suspend();
-    }
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
-    this.vad.start();
+    await this.initVAD();
+    this.updateUI("initVAD");
     const result = await this.waitForVoice();
-    this.vad.pause();
+    this.vad.destroy();
     return result;
   }
 
