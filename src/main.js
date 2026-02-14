@@ -238,13 +238,13 @@ class ExerciseAssistant {
 
   async listenForVoice() {
     if (!this.isRunning) return false;
+    await this.delay(300);
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
-    await this.delay(100);
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
-    await this.delay(100);
+    await this.delay(300);
     return result;
   }
 
