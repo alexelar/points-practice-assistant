@@ -212,8 +212,9 @@ class ExerciseAssistant {
   async playCommand(command) {
     if (!this.isRunning) return;
     this.updateUI(this.t("playingCommand"));
-    const audio = this.audioCache[command.filename].cloneNode();
+    const audio = this.audioCache[command.filename];
     audio.playbackRate = this.settings.playbackRate;
+    audio.currentTime = 0;
     await audio.play();
     await new Promise((resolve) => (audio.onended = resolve));
   }
@@ -221,8 +222,9 @@ class ExerciseAssistant {
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
     this.updateUI(this.t("confirmingCommand"));
-    const audio = this.audioCache[confirmation.filename].cloneNode();
+    const audio = this.audioCache[confirmation.filename];
     audio.playbackRate = this.settings.playbackRate;
+    audio.currentTime = 0;
     await audio.play();
     await new Promise((resolve) => (audio.onended = resolve));
   }
