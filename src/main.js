@@ -227,8 +227,8 @@ class ExerciseAssistant {
     this.updateUI(this.t("playingCommand"));
     const audio = this.audioCache[command.filename];
     this.updateUI(`readyState: ${audio.readyState}, paused: ${audio.paused}`);
+    audio.load();
     audio.playbackRate = this.settings.playbackRate;
-    audio.currentTime = 0;
     audio.volume = 1.0;
     const playStart = performance.now();
     await audio.play();
@@ -245,8 +245,8 @@ class ExerciseAssistant {
     this.updateUI(this.t("confirmingCommand"));
     const audio = this.audioCache[confirmation.filename];
     this.updateUI(`CONF readyState: ${audio.readyState}, paused: ${audio.paused}`);
+    audio.load();
     audio.playbackRate = this.settings.playbackRate;
-    audio.currentTime = 0;
     audio.volume = 1.0;
     const playStart = performance.now();
     await audio.play();
