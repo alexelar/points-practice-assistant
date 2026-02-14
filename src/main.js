@@ -87,6 +87,7 @@ class ExerciseAssistant {
         await this.audioContext.resume();
       }
       this.updateUI(this.t("preparation"));
+      await this.initVAD();
       await this.requestWakeLock();
       this.isRunning = true;
       this.cycleCount = 0;
@@ -114,16 +115,12 @@ class ExerciseAssistant {
     this.updateUI(this.t("sessionStopped"));
     this.stopDurationTimer();
     if (this.vad) {
-      this.vad.destroy();
-      this.vad = null;
+      this.vad.pause();
     }
     this.releaseWakeLock();
   }
 
   async initVAD() {
-    if (this.vad) {
-      this.vad.destroy();
-    }
     const base = import.meta.env.BASE_URL;
     this.vad = await MicVAD.new({
       baseAssetPath: `${base}assets/vad/`,
@@ -139,6 +136,7 @@ class ExerciseAssistant {
         this.voiceDetected = true;
       }
     });
+    this.vad.pause();
   }
 
   async requestWakeLock() {
@@ -225,13 +223,20 @@ class ExerciseAssistant {
 
   async playCommand(command) {
     if (!this.isRunning) return;
+    const startTime = performance.now();
     this.updateUI(this.t("playingCommand"));
     const audio = this.audioCache[command.filename];
+    this.updateUI(`readyState: ${audio.readyState}, paused: ${audio.paused}`);
     audio.playbackRate = this.settings.playbackRate;
     audio.currentTime = 0;
     audio.volume = 1.0;
+    const playStart = performance.now();
     await audio.play();
+    const playDelay = Math.round(performance.now() - playStart);
+    this.updateUI(`Play delay: ${playDelay}ms`);
     await new Promise((resolve) => (audio.onended = resolve));
+    const totalTime = Math.round(performance.now() - startTime);
+    this.updateUI(`Total: ${totalTime}ms`);
   }
 
   async playConfirmation(confirmation) {
@@ -249,10 +254,9 @@ class ExerciseAssistant {
     if (!this.isRunning) return false;
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
-    await this.initVAD();
-    this.updateUI("initVAD");
+    this.vad.start();
     const result = await this.waitForVoice();
-    this.vad.destroy();
+    this.vad.pause();
     return result;
   }
 
