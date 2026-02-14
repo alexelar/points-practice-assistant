@@ -241,13 +241,20 @@ class ExerciseAssistant {
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
+    const startTime = performance.now();
     this.updateUI(this.t("confirmingCommand"));
     const audio = this.audioCache[confirmation.filename];
+    this.updateUI(`CONF readyState: ${audio.readyState}, paused: ${audio.paused}`);
     audio.playbackRate = this.settings.playbackRate;
     audio.currentTime = 0;
     audio.volume = 1.0;
+    const playStart = performance.now();
     await audio.play();
+    const playDelay = Math.round(performance.now() - playStart);
+    this.updateUI(`CONF Play delay: ${playDelay}ms`);
     await new Promise((resolve) => (audio.onended = resolve));
+    const totalTime = Math.round(performance.now() - startTime);
+    this.updateUI(`CONF Total: ${totalTime}ms`);
   }
 
   async listenForVoice() {
