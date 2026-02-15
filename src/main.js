@@ -35,6 +35,8 @@ class ExerciseAssistant {
       { filename: "confirmation4.mp3" },
       { filename: "confirmation5.mp3" },
     ];
+    this.audioCache = {};
+    this.audioContext = null;
   }
 
   initUI() {
@@ -74,6 +76,16 @@ class ExerciseAssistant {
 
   async startSession() {
     try {
+      if (!this.audioContext) {
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+      if (Object.keys(this.audioCache).length === 0) {
+        this.updateUI(this.t("audioLoading"));
+        await this.preloadAudio();
+      }
       this.updateUI(this.t("preparation"));
       await this.initVAD();
       await this.requestWakeLock();
@@ -144,6 +156,20 @@ class ExerciseAssistant {
     }
   }
 
+  async preloadAudio() {
+    const allFiles = [
+      ...Object.values(this.commands).map(c => c.filename),
+      ...this.confirmations.map(c => c.filename)
+    ];
+    
+    await Promise.all(allFiles.map(async filename => {
+      const response = await fetch(this.commandPath + "/" + filename);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      this.audioCache[filename] = audioBuffer;
+    }));
+  }
+
   async runCycle() {
     if (!this.isRunning) return;
 
@@ -193,21 +219,25 @@ class ExerciseAssistant {
   async playCommand(command) {
     if (!this.isRunning) return;
     this.updateUI(this.t("playingCommand"));
-    const audio = new Audio(this.commandPath + "/" + command.filename);
-    audio.playbackRate = this.settings.playbackRate;
-    audio.volume = 1.0;
-    await audio.play();
-    await new Promise((resolve) => (audio.onended = resolve));
+    const buffer = this.audioCache[command.filename];
+    const source = this.audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = this.settings.playbackRate;
+    source.connect(this.audioContext.destination);
+    source.start(0);
+    await new Promise((resolve) => (source.onended = resolve));
   }
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
     this.updateUI(this.t("confirmingCommand"));
-    const audio = new Audio(this.commandPath + "/" + confirmation.filename);
-    audio.playbackRate = this.settings.playbackRate;
-    audio.volume = 1.0;
-    await audio.play();
-    await new Promise((resolve) => (audio.onended = resolve));
+    const buffer = this.audioCache[confirmation.filename];
+    const source = this.audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = this.settings.playbackRate;
+    source.connect(this.audioContext.destination);
+    source.start(0);
+    await new Promise((resolve) => (source.onended = resolve));
   }
 
   async listenForVoice() {
