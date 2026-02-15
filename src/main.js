@@ -13,6 +13,7 @@ class ExerciseAssistant {
     this.state = "idle";
     this.cycleCount = 0;
     this.isRunning = false;
+    this.isAndroid = /Android/i.test(navigator.userAgent);
     this.vad = null;
     this.voiceDetected = false;
     this.voiceDetecting = false;
@@ -136,7 +137,9 @@ class ExerciseAssistant {
       }
     });
     this.vad.pause();
-    await this.delay(this.settings.postVadDelayMs);
+    if (this.isAndroid && this.settings.postVadDelayMs > 0) {
+      await this.delay(this.settings.postVadDelayMs * 5);
+    }
   }
 
   async requestWakeLock() {
