@@ -244,7 +244,8 @@ class ExerciseAssistant {
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
-    this.delay(5000);
+    this.updateUI("delay 3000");
+    await this.delay(3000);
     return result;
   }
 
