@@ -88,6 +88,7 @@ class ExerciseAssistant {
       }
       this.updateUI(this.t("preparation"));
       await this.initVAD();
+      this.delay(3000);
       await this.requestWakeLock();
       this.isRunning = true;
       this.cycleCount = 0;
@@ -115,7 +116,8 @@ class ExerciseAssistant {
     this.updateUI(this.t("sessionStopped"));
     this.stopDurationTimer();
     if (this.vad) {
-      this.vad.pause();
+      this.vad.destroy();
+      this.vad = null;
     }
     this.releaseWakeLock();
   }
@@ -212,14 +214,15 @@ class ExerciseAssistant {
       await this.playCommandAndWait(command);
       return;
     }
+    await this.delay(300);
     const confirmation = this.confirmations[Math.floor(Math.random() * this.confirmations.length)];
     await this.playConfirmation(confirmation);
+    await this.initVAD();
   }
 
   async playCommand(command) {
     if (!this.isRunning) return;
     const startTime = performance.now();
-    this.updateUI(this.t("playingCommand"));
     const buffer = this.audioCache[command.filename];
     const source = this.audioContext.createBufferSource();
     source.buffer = buffer;
@@ -228,16 +231,13 @@ class ExerciseAssistant {
     const playStart = performance.now();
     source.start(0);
     const playDelay = Math.round(performance.now() - playStart);
-    this.updateUI(`Play delay: ${playDelay}ms`);
     await new Promise((resolve) => (source.onended = resolve));
     const totalTime = Math.round(performance.now() - startTime);
-    this.updateUI(`Total: ${totalTime}ms`);
   }
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
     const startTime = performance.now();
-    this.updateUI(this.t("confirmingCommand"));
     const buffer = this.audioCache[confirmation.filename];
     const source = this.audioContext.createBufferSource();
     source.buffer = buffer;
@@ -246,10 +246,8 @@ class ExerciseAssistant {
     const playStart = performance.now();
     source.start(0);
     const playDelay = Math.round(performance.now() - playStart);
-    this.updateUI(`CONF Play delay: ${playDelay}ms`);
     await new Promise((resolve) => (source.onended = resolve));
     const totalTime = Math.round(performance.now() - startTime);
-    this.updateUI(`CONF Total: ${totalTime}ms`);
   }
 
   async listenForVoice() {
@@ -258,7 +256,13 @@ class ExerciseAssistant {
     this.voiceDetected = false;
     this.vad.start();
     const result = await this.waitForVoice();
-    this.vad.pause();
+    
+    // Force stop all mic tracks
+    if (this.vad.stream) {
+      this.vad.stream.getTracks().forEach(track => track.stop());
+    }
+    this.vad.destroy();
+    this.vad = null;
     return result;
   }
 
