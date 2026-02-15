@@ -50,6 +50,8 @@ class ExerciseAssistant {
     this.settingsBtn = document.getElementById("settingsBtn");
     this.settingsModal = document.getElementById("settingsModal");
 
+    document.getElementById("isAndroid").textContent = this.isAndroid ? "Android" : "Desktop";
+
     this.startBtn.addEventListener("click", () => this.startSession());
     this.stopBtn.addEventListener("click", () => this.stopSession());
     document.getElementById("language").addEventListener("change", (e) => {
