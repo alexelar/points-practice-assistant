@@ -79,9 +79,6 @@ class ExerciseAssistant {
       if (!this.audioContext) {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
-      if (this.audioContext.state === 'suspended') {
-        await this.audioContext.resume();
-      }
       if (Object.keys(this.audioCache).length === 0) {
         this.updateUI(this.t("audioLoading"));
         await this.preloadAudio();
@@ -247,6 +244,7 @@ class ExerciseAssistant {
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
+    this.delay(1000);
     return result;
   }
 
