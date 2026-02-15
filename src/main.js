@@ -15,6 +15,7 @@ class ExerciseAssistant {
     this.isRunning = false;
     this.vad = null;
     this.voiceDetected = false;
+    this.voiceDetecting = false;
     this.wakeLock = null;
     this.sessionStartTime = null;
     this.durationInterval = null;
@@ -128,6 +129,7 @@ class ExerciseAssistant {
       redemptionMs: this.settings.redemptionMs,
       onSpeechRealStart: () => {
         this.updateUI(this.t("voiceDetected"));
+        this.voiceDetecting = true;
       },
       onSpeechEnd: () => {
         this.voiceDetected = true;
@@ -242,6 +244,7 @@ class ExerciseAssistant {
     if (!this.isRunning) return false;
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
+    this.voiceDetecting = false;
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
@@ -255,7 +258,7 @@ class ExerciseAssistant {
       const timeout = this.settings.repeatTimeout * 1000;
 
       const check = () => {
-        if (!this.isRunning || Date.now() - startTime > timeout) {
+        if (!this.isRunning || (!this.voiceDetecting && Date.now() - startTime > timeout)) {
           resolve(false);
           return;
         }
