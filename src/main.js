@@ -134,6 +134,7 @@ class ExerciseAssistant {
       }
     });
     this.vad.pause();
+    await this.delay(this.settings.postVadDelayMs);
   }
 
   async requestWakeLock() {
@@ -244,8 +245,7 @@ class ExerciseAssistant {
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
-    this.updateUI("delay 1000");
-    await this.delay(1000);
+    await this.delay(this.settings.postVadDelayMs);
     return result;
   }
 

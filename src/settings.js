@@ -10,6 +10,7 @@ export class Settings {
     this.negativeSpeechThreshold = parseFloat(localStorage.getItem("negativeSpeechThreshold")) || 0.6;
     this.minSpeechMs = parseInt(localStorage.getItem("minSpeechMs")) || 200;
     this.redemptionMs = parseInt(localStorage.getItem("redemptionMs")) || 500;
+    this.postVadDelayMs = parseInt(localStorage.getItem("postVadDelayMs")) || 0;
     
     this.settingsModal = document.getElementById("settingsModal");
     this.initEventListeners();
@@ -41,6 +42,7 @@ export class Settings {
     document.getElementById("negativeSpeechThreshold").value = this.negativeSpeechThreshold;
     document.getElementById("minSpeechMs").value = this.minSpeechMs;
     document.getElementById("redemptionMs").value = this.redemptionMs;
+    document.getElementById("postVadDelayMs").value = this.postVadDelayMs;
 
     this.settingsModal.classList.add("show");
   }
@@ -55,6 +57,7 @@ export class Settings {
     this.negativeSpeechThreshold = parseFloat(document.getElementById("negativeSpeechThreshold").value);
     this.minSpeechMs = parseInt(document.getElementById("minSpeechMs").value);
     this.redemptionMs = parseInt(document.getElementById("redemptionMs").value);
+    this.postVadDelayMs = parseInt(document.getElementById("postVadDelayMs").value);
     
     localStorage.setItem("sessionMode", this.sessionMode);
     localStorage.setItem("playbackRate", this.playbackRate);
@@ -65,6 +68,7 @@ export class Settings {
     localStorage.setItem("negativeSpeechThreshold", this.negativeSpeechThreshold);
     localStorage.setItem("minSpeechMs", this.minSpeechMs);
     localStorage.setItem("redemptionMs", this.redemptionMs);
+    localStorage.setItem("postVadDelayMs", this.postVadDelayMs);
     
     this.settingsModal.classList.remove("show");
   }

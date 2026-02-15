@@ -68,8 +68,11 @@
             <label for="minSpeechMs"><span data-i18n="minSpeechMs">Мин. длительность речи (мс)</span>:
                 <input type="number" id="minSpeechMs" min="0" max="2000" step="50" value="200">
             </label>
-            <label for="redemptionMs"><span data-i18n="redemptionMs">Задержка подтверждения (мс)</span>:
+            <label for="redemptionMs"><span data-i18n="redemptionMs">Макс. пауза в речи (мс)</span>:
                 <input type="number" id="redemptionMs" min="0" max="2000" step="50" value="500">
+            </label>
+            <label for="postVadDelayMs"><span data-i18n="postVadDelayMs">Пауза после обнаружения голоса (мс)</span>:
+                <input type="number" id="postVadDelayMs" min="0" max="3000" step="100" value="0">
             </label>
             <button id="closeSettings" class="btn btn-start" data-i18n="close">Закрыть</button>
         </div>
