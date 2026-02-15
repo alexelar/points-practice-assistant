@@ -1,6 +1,6 @@
 export class Settings {
   constructor() {
-    this.isAndroid = /Android/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
     this.lang = localStorage.getItem("language") || "ru";
     this.sessionMode = localStorage.getItem("sessionMode") || "full";
     this.playbackRate = parseFloat(localStorage.getItem("playbackRate")) || 1.2;
@@ -11,7 +11,7 @@ export class Settings {
     this.negativeSpeechThreshold = parseFloat(localStorage.getItem("negativeSpeechThreshold")) || 0.6;
     this.minSpeechMs = parseInt(localStorage.getItem("minSpeechMs")) || 200;
     this.redemptionMs = parseInt(localStorage.getItem("redemptionMs")) || 500;
-    this.postVadDelayMs = parseInt(localStorage.getItem("postVadDelayMs")) || (this.isAndroid ? 500 : 0);
+    this.postVadDelayMs = parseInt(localStorage.getItem("postVadDelayMs")) || (isAndroid ? 500 : 0);
     
     this.settingsModal = document.getElementById("settingsModal");
     this.initEventListeners();
