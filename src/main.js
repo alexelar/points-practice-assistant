@@ -137,9 +137,6 @@ class ExerciseAssistant {
         this.voiceDetected = true;
       }
     });
-    if (this.isAndroid && this.settings.postVadDelayMs > 0) {
-      await this.delay(this.settings.postVadDelayMs * 5);
-    }
   }
 
   async requestWakeLock() {
