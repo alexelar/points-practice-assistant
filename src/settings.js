@@ -3,15 +3,15 @@ export class Settings {
     const isAndroid = /Android/i.test(navigator.userAgent);
     this.lang = localStorage.getItem("language") || "ru";
     this.sessionMode = localStorage.getItem("sessionMode") || "full";
-    this.playbackRate = parseFloat(localStorage.getItem("playbackRate")) || 1.2;
-    this.inspectBodyInterval = parseInt(localStorage.getItem("inspectBodyInterval")) || 10;
-    this.shuffleInterval = parseInt(localStorage.getItem("shuffleInterval")) || 3;
-    this.repeatTimeout = parseInt(localStorage.getItem("repeatTimeout")) || 10;
-    this.positiveSpeechThreshold = parseFloat(localStorage.getItem("positiveSpeechThreshold")) || 0.85;
-    this.negativeSpeechThreshold = parseFloat(localStorage.getItem("negativeSpeechThreshold")) || 0.6;
-    this.minSpeechMs = parseInt(localStorage.getItem("minSpeechMs")) || 200;
-    this.redemptionMs = parseInt(localStorage.getItem("redemptionMs")) || 500;
-    this.postVadDelayMs = parseInt(localStorage.getItem("postVadDelayMs")) || (isAndroid ? 500 : 0);
+    this.playbackRate = localStorage.getItem("playbackRate") !== null ? parseFloat(localStorage.getItem("playbackRate")) : 1.2;
+    this.inspectBodyInterval = localStorage.getItem("inspectBodyInterval") !== null ? parseInt(localStorage.getItem("inspectBodyInterval")) : 10;
+    this.shuffleInterval = localStorage.getItem("shuffleInterval") !== null ? parseInt(localStorage.getItem("shuffleInterval")) : 3;
+    this.repeatTimeout = localStorage.getItem("repeatTimeout") !== null ? parseInt(localStorage.getItem("repeatTimeout")) : 10;
+    this.positiveSpeechThreshold = localStorage.getItem("positiveSpeechThreshold") !== null ? parseFloat(localStorage.getItem("positiveSpeechThreshold")) : 0.85;
+    this.negativeSpeechThreshold = localStorage.getItem("negativeSpeechThreshold") !== null ? parseFloat(localStorage.getItem("negativeSpeechThreshold")) : 0.6;
+    this.minSpeechMs = localStorage.getItem("minSpeechMs") !== null ? parseInt(localStorage.getItem("minSpeechMs")) : 200;
+    this.redemptionMs = localStorage.getItem("redemptionMs") !== null ? parseInt(localStorage.getItem("redemptionMs")) : 500;
+    this.postVadDelayMs = localStorage.getItem("postVadDelayMs") !== null ? parseInt(localStorage.getItem("postVadDelayMs")) : (isAndroid ? 500 : 0);
     
     this.settingsModal = document.getElementById("settingsModal");
     this.initEventListeners();
