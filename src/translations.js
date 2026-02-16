@@ -32,7 +32,7 @@ export const translations = {
     durationLabel: "Time",
     micRequired: "Microphone access required",
     micNotFound: "Microphone is not found",
-    sessionError: "Session error"
+    sessionError: "Session error",
   },
   ru: {
     title: "Ассистент по работе с точками",
@@ -67,6 +67,6 @@ export const translations = {
     durationLabel: "Время",
     micRequired: "Требуется доступ к микрофону",
     micNotFound: "Микрофон не найден",
-    sessionError: "Ошибка сессии"
-  }
+    sessionError: "Ошибка сессии",
+  },
 };

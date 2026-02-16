@@ -69,7 +69,7 @@ class ExerciseAssistant {
   updateLanguage() {
     document.documentElement.lang = this.settings.lang;
     document.title = this.t("title");
-    document.querySelectorAll("[data-i18n]").forEach(el => {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
       if (el.dataset.i18n.length > 0) {
         el.textContent = this.t(el.dataset.i18n);
       }
@@ -97,9 +97,9 @@ class ExerciseAssistant {
       this.startDurationTimer();
       this.runCycle();
     } catch (err) {
-      if (err.name === 'NotAllowedError') {
+      if (err.name === "NotAllowedError") {
         alert(this.t("micRequired"));
-      } else if (err.name === 'NotFoundError') {
+      } else if (err.name === "NotFoundError") {
         alert(this.t("micNotFound"));
       } else {
         alert(this.t("sessionError") + ": " + err.message);
@@ -135,7 +135,7 @@ class ExerciseAssistant {
       },
       onSpeechEnd: () => {
         this.voiceDetected = true;
-      }
+      },
     });
   }
 
@@ -158,16 +158,18 @@ class ExerciseAssistant {
 
   async preloadAudio() {
     const allFiles = [
-      ...Object.values(this.commands).map(c => c.filename),
-      ...this.confirmations.map(c => c.filename)
+      ...Object.values(this.commands).map((c) => c.filename),
+      ...this.confirmations.map((c) => c.filename),
     ];
-    
-    await Promise.all(allFiles.map(async filename => {
-      const response = await fetch(this.commandPath + "/" + filename);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-      this.audioCache[filename] = audioBuffer;
-    }));
+
+    await Promise.all(
+      allFiles.map(async (filename) => {
+        const response = await fetch(this.commandPath + "/" + filename);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        this.audioCache[filename] = audioBuffer;
+      }),
+    );
   }
 
   async runCycle() {
@@ -192,9 +194,9 @@ class ExerciseAssistant {
       commandsToPlay.push(this.commands.touch);
     }
     commandsToPlay = commandsToPlay.concat(feelCommands);
-    commandsToPlay.push({ ...this.commands.release, ...{ deaf: this.settings.sessionMode === "short" }});
+    commandsToPlay.push({ ...this.commands.release, ...{ deaf: this.settings.sessionMode === "short" } });
 
-    const fields = { filename: '', deaf: false };
+    const fields = { filename: "", deaf: false };
     while (this.isRunning && commandsToPlay.length > 0) {
       const command = { ...fields, ...commandsToPlay.shift() };
       await this.playCommandAndWait(command);
@@ -205,7 +207,7 @@ class ExerciseAssistant {
 
   async playCommandAndWait(command) {
     if (!this.isRunning) return;
-    await this.playCommand(command)
+    await this.playCommand(command);
     if (command.deaf) return;
     const voiceDetected = await this.listenForVoice();
     if (!voiceDetected) {
@@ -291,7 +293,7 @@ class ExerciseAssistant {
     const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
-    this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
   delay(ms) {

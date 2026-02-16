@@ -3,16 +3,33 @@ export class Settings {
     const isAndroid = /Android/i.test(navigator.userAgent);
     this.lang = localStorage.getItem("language") || "ru";
     this.sessionMode = localStorage.getItem("sessionMode") || "full";
-    this.playbackRate = localStorage.getItem("playbackRate") !== null ? parseFloat(localStorage.getItem("playbackRate")) : 1.2;
-    this.inspectBodyInterval = localStorage.getItem("inspectBodyInterval") !== null ? parseInt(localStorage.getItem("inspectBodyInterval")) : 10;
-    this.shuffleInterval = localStorage.getItem("shuffleInterval") !== null ? parseInt(localStorage.getItem("shuffleInterval")) : 3;
-    this.repeatTimeout = localStorage.getItem("repeatTimeout") !== null ? parseInt(localStorage.getItem("repeatTimeout")) : 10;
-    this.positiveSpeechThreshold = localStorage.getItem("positiveSpeechThreshold") !== null ? parseFloat(localStorage.getItem("positiveSpeechThreshold")) : 0.85;
-    this.negativeSpeechThreshold = localStorage.getItem("negativeSpeechThreshold") !== null ? parseFloat(localStorage.getItem("negativeSpeechThreshold")) : 0.6;
-    this.minSpeechMs = localStorage.getItem("minSpeechMs") !== null ? parseInt(localStorage.getItem("minSpeechMs")) : 200;
-    this.redemptionMs = localStorage.getItem("redemptionMs") !== null ? parseInt(localStorage.getItem("redemptionMs")) : 500;
-    this.postVadDelayMs = localStorage.getItem("postVadDelayMs") !== null ? parseInt(localStorage.getItem("postVadDelayMs")) : (isAndroid ? 500 : 0);
-    
+    this.playbackRate =
+      localStorage.getItem("playbackRate") !== null ? parseFloat(localStorage.getItem("playbackRate")) : 1.2;
+    this.inspectBodyInterval =
+      localStorage.getItem("inspectBodyInterval") !== null ? parseInt(localStorage.getItem("inspectBodyInterval")) : 10;
+    this.shuffleInterval =
+      localStorage.getItem("shuffleInterval") !== null ? parseInt(localStorage.getItem("shuffleInterval")) : 3;
+    this.repeatTimeout =
+      localStorage.getItem("repeatTimeout") !== null ? parseInt(localStorage.getItem("repeatTimeout")) : 10;
+    this.positiveSpeechThreshold =
+      localStorage.getItem("positiveSpeechThreshold") !== null
+        ? parseFloat(localStorage.getItem("positiveSpeechThreshold"))
+        : 0.85;
+    this.negativeSpeechThreshold =
+      localStorage.getItem("negativeSpeechThreshold") !== null
+        ? parseFloat(localStorage.getItem("negativeSpeechThreshold"))
+        : 0.6;
+    this.minSpeechMs =
+      localStorage.getItem("minSpeechMs") !== null ? parseInt(localStorage.getItem("minSpeechMs")) : 200;
+    this.redemptionMs =
+      localStorage.getItem("redemptionMs") !== null ? parseInt(localStorage.getItem("redemptionMs")) : 500;
+    this.postVadDelayMs =
+      localStorage.getItem("postVadDelayMs") !== null
+        ? parseInt(localStorage.getItem("postVadDelayMs"))
+        : isAndroid
+          ? 500
+          : 0;
+
     this.settingsModal = document.getElementById("settingsModal");
     this.initEventListeners();
   }
@@ -59,7 +76,7 @@ export class Settings {
     this.minSpeechMs = parseInt(document.getElementById("minSpeechMs").value);
     this.redemptionMs = parseInt(document.getElementById("redemptionMs").value);
     this.postVadDelayMs = parseInt(document.getElementById("postVadDelayMs").value);
-    
+
     localStorage.setItem("sessionMode", this.sessionMode);
     localStorage.setItem("playbackRate", this.playbackRate);
     localStorage.setItem("inspectBodyInterval", this.inspectBodyInterval);
@@ -70,7 +87,7 @@ export class Settings {
     localStorage.setItem("minSpeechMs", this.minSpeechMs);
     localStorage.setItem("redemptionMs", this.redemptionMs);
     localStorage.setItem("postVadDelayMs", this.postVadDelayMs);
-    
+
     this.settingsModal.classList.remove("show");
   }
 }
