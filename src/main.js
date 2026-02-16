@@ -57,6 +57,17 @@ class ExerciseAssistant {
       this.updateLanguage();
     });
 
+    navigator.mediaDevices.addEventListener('devicechange', () => {
+      console.log('Media devices changed');
+      if (this.vad?.stream) {
+        const audioTrack = this.vad.stream.getAudioTracks()[0];
+        if (audioTrack) {
+          console.log('Mic track state:', audioTrack.readyState);
+          console.log('Mic track enabled:', audioTrack.enabled);
+        }
+      }
+    });
+
     document.getElementById("version").textContent = `v${__BUILD_TIME__}`;
     this.updateLanguage();
   }
@@ -80,6 +91,9 @@ class ExerciseAssistant {
     try {
       if (!this.audioContext) {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.audioContext.addEventListener('statechange', () => {
+          console.log('AudioContext state:', this.audioContext.state);
+        });
       }
       if (Object.keys(this.audioCache).length === 0) {
         this.updateUI(this.t("audioLoading"));
@@ -248,9 +262,12 @@ class ExerciseAssistant {
     this.updateUI(this.t("listeningForVoice"));
     this.voiceDetected = false;
     this.voiceDetecting = false;
+    console.log('Mic starting');
     this.vad.start();
     const result = await this.waitForVoice();
+    console.log('Mic pausing');
     this.vad.pause();
+    console.log("Post-mic context state:", this.audioContext.state);
     await this.delay(this.settings.postVadDelayMs);
     return result;
   }
