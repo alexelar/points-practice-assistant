@@ -267,17 +267,6 @@ class ExerciseAssistant {
     const result = await this.waitForVoice();
     console.log('Mic pausing');
     this.vad.pause();
-    
-    // Stop mic track
-    if (this.vad?.stream) {
-      const audioTrack = this.vad.stream.getAudioTracks()[0];
-      if (audioTrack) {
-        console.log('Before stop - track state:', audioTrack.readyState);
-        audioTrack.stop();
-        console.log('After stop - track state:', audioTrack.readyState);
-      }
-    }
-    
     console.log("Post-mic context state:", this.audioContext.state);
     await this.delay(this.settings.postVadDelayMs);
     return result;
