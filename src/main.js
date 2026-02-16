@@ -145,7 +145,7 @@ class ExerciseAssistant {
         this.wakeLock = await navigator.wakeLock.request("screen");
       }
     } catch (err) {
-      console.log("Wake Lock not supported:", err);
+      console.warn("Wake Lock not supported:", err);
     }
   }
 
@@ -221,19 +221,17 @@ class ExerciseAssistant {
   async playCommand(command) {
     if (!this.isRunning) return;
     this.updateUI(this.t("playingCommand"));
-    const buffer = this.audioCache[command.filename];
-    const source = this.audioContext.createBufferSource();
-    source.buffer = buffer;
-    source.playbackRate.value = this.settings.playbackRate;
-    source.connect(this.audioContext.destination);
-    source.start(0);
-    await new Promise((resolve) => (source.onended = resolve));
+    await this.playAudio(command.filename);
   }
 
   async playConfirmation(confirmation) {
     if (!this.isRunning) return;
     this.updateUI(this.t("confirmingCommand"));
-    const buffer = this.audioCache[confirmation.filename];
+    await this.playAudio(confirmation.filename);
+  }
+
+  async playAudio(filename) {
+    const buffer = this.audioCache[filename];
     const source = this.audioContext.createBufferSource();
     source.buffer = buffer;
     source.playbackRate.value = this.settings.playbackRate;
