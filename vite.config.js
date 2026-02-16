@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { VitePWA } from 'vite-plugin-pwa'
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
-const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+const buildTime = new Date().toISOString().slice(8, 16).replace('T', ':');
 
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
