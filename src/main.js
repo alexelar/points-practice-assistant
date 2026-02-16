@@ -128,6 +128,7 @@ class ExerciseAssistant {
       negativeSpeechThreshold: this.settings.negativeSpeechThreshold,
       minSpeechMs: this.settings.minSpeechMs,
       redemptionMs: this.settings.redemptionMs,
+      startOnLoad: false,
       onSpeechRealStart: () => {
         this.updateUI(this.t("voiceDetected"));
         this.voiceDetecting = true;
@@ -136,7 +137,6 @@ class ExerciseAssistant {
         this.voiceDetected = true;
       }
     });
-    this.vad.pause();
     if (this.isAndroid && this.settings.postVadDelayMs > 0) {
       await this.delay(this.settings.postVadDelayMs * 5);
     }
