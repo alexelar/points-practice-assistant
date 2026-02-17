@@ -30,6 +30,10 @@
         <div class="version" id="version"></div>
     </div>
 
+    <div id="tapOverlay" class="tap-overlay">
+        <div class="tap-hint" data-i18n="tapToContinue">Нажмите для продолжения</div>
+    </div>
+
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <button id="closeSettingsIcon" class="btn-icon modal-close">⨯</button>
@@ -38,6 +42,12 @@
                 <select id="language">
                     <option value="en">English</option>
                     <option value="ru">Русский</option>
+                </select>
+            </label>
+            <label for="inputMode"><span data-i18n="inputMode">Режим ввода</span>:
+                <select id="inputMode">
+                    <option value="voice" data-i18n="voiceMode">Голос</option>
+                    <option value="tap" data-i18n="tapMode">Касание</option>
                 </select>
             </label>
             <label for="sessionMode"><span data-i18n="sessionMode">Режим сессии</span>:

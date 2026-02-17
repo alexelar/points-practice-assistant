@@ -17,6 +17,7 @@ class ExerciseAssistant {
     this.vad = null;
     this.voiceDetected = false;
     this.voiceDetecting = false;
+    this.tapDetected = false;
     this.wakeLock = null;
     this.sessionStartTime = null;
     this.durationInterval = null;
@@ -49,9 +50,13 @@ class ExerciseAssistant {
     this.durationEl = document.getElementById("duration");
     this.settingsBtn = document.getElementById("settingsBtn");
     this.settingsModal = document.getElementById("settingsModal");
+    this.tapOverlay = document.getElementById("tapOverlay");
 
     this.startBtn.addEventListener("click", () => this.startSession());
     this.stopBtn.addEventListener("click", () => this.stopSession());
+    if (this.tapOverlay) {
+      this.tapOverlay.addEventListener("click", () => this.handleTap());
+    }
     document.getElementById("language").addEventListener("change", (e) => {
       this.settings.changeLanguage(e.target.value);
       this.updateLanguage();
@@ -86,7 +91,9 @@ class ExerciseAssistant {
         await this.preloadAudio();
       }
       this.updateUI(this.t("preparation"));
-      await this.initVAD();
+      if (this.settings.inputMode === "voice") {
+        await this.initVAD();
+      }
       await this.requestWakeLock();
       this.isRunning = true;
       this.cycleCount = 0;
@@ -113,6 +120,7 @@ class ExerciseAssistant {
     this.stopBtn.disabled = true;
     this.updateUI(this.t("sessionStopped"));
     this.stopDurationTimer();
+    this.hideTapOverlay();
     if (this.vad) {
       this.vad.pause();
     }
@@ -209,8 +217,10 @@ class ExerciseAssistant {
     if (!this.isRunning) return;
     await this.playCommand(command);
     if (command.deaf) return;
-    const voiceDetected = await this.listenForVoice();
-    if (!voiceDetected) {
+    const confirmed = this.settings.inputMode === "tap" 
+      ? await this.waitForTap() 
+      : await this.listenForVoice();
+    if (!confirmed) {
       await this.playCommandAndWait(command);
       return;
     }
@@ -264,6 +274,54 @@ class ExerciseAssistant {
         }
 
         if (this.voiceDetected) {
+          resolve(true);
+          return;
+        }
+
+        requestAnimationFrame(check);
+      };
+
+      check();
+    });
+  }
+
+  showTapOverlay() {
+    if (this.tapOverlay) {
+      this.tapOverlay.classList.add("show");
+    }
+  }
+
+  hideTapOverlay() {
+    if (this.tapOverlay) {
+      this.tapOverlay.classList.remove("show");
+    }
+  }
+
+  handleTap() {
+    if (this.isRunning) {
+      this.tapDetected = true;
+    }
+  }
+
+  async waitForTap() {
+    if (!this.isRunning) return false;
+    this.updateUI(this.t("tapToContinue"));
+    this.tapDetected = false;
+    this.showTapOverlay();
+    
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+      const timeout = this.settings.repeatTimeout * 1000;
+
+      const check = () => {
+        if (!this.isRunning || Date.now() - startTime > timeout) {
+          this.hideTapOverlay();
+          resolve(false);
+          return;
+        }
+
+        if (this.tapDetected) {
+          this.hideTapOverlay();
           resolve(true);
           return;
         }

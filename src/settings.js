@@ -2,6 +2,7 @@ export class Settings {
   constructor() {
     const isAndroid = /Android/i.test(navigator.userAgent);
     this.lang = localStorage.getItem("language") || "ru";
+    this.inputMode = localStorage.getItem("inputMode") || "voice";
     this.sessionMode = localStorage.getItem("sessionMode") || "full";
     this.playbackRate =
       localStorage.getItem("playbackRate") !== null ? parseFloat(localStorage.getItem("playbackRate")) : 1.2;
@@ -51,6 +52,7 @@ export class Settings {
 
   open() {
     document.getElementById("language").value = this.lang;
+    document.getElementById("inputMode").value = this.inputMode;
     document.getElementById("sessionMode").value = this.sessionMode;
     document.getElementById("playbackRate").value = this.playbackRate;
     document.getElementById("inspectBodyInterval").value = this.inspectBodyInterval;
@@ -66,6 +68,7 @@ export class Settings {
   }
 
   close() {
+    this.inputMode = document.getElementById("inputMode").value;
     this.sessionMode = document.getElementById("sessionMode").value;
     this.playbackRate = parseFloat(document.getElementById("playbackRate").value);
     this.inspectBodyInterval = parseInt(document.getElementById("inspectBodyInterval").value);
@@ -77,6 +80,7 @@ export class Settings {
     this.redemptionMs = parseInt(document.getElementById("redemptionMs").value);
     this.postVadDelayMs = parseInt(document.getElementById("postVadDelayMs").value);
 
+    localStorage.setItem("inputMode", this.inputMode);
     localStorage.setItem("sessionMode", this.sessionMode);
     localStorage.setItem("playbackRate", this.playbackRate);
     localStorage.setItem("inspectBodyInterval", this.inspectBodyInterval);
