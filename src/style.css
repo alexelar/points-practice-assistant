@@ -73,22 +73,27 @@ body {
     cursor: not-allowed;
 }
 
-.btn-start {
+.btn-primary {
     background: #6b57ff77;
     color: #fff;
 }
 
-.btn-start:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled) {
     background: #6b57ff99;
 }
 
-.btn-stop {
+.btn-alert {
     background: #FF579755;
     color: #fff;
 }
 
-.btn-stop:hover:not(:disabled) {
+.btn-alert:hover:not(:disabled) {
     background: #FF579777;
+}
+
+.btn-left {
+    margin-left: auto;
+    display: block;
 }
 
 .progress {
@@ -132,9 +137,31 @@ body {
     max-width: 400px;
     width: 100%;
     color: #fff;
-    max-height: 100vh;
+    max-height: 100dvh;
     overflow-y: auto;
     position: relative;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #000;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+.modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: #333 #000;
 }
 
 .modal-close {
