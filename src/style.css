@@ -52,6 +52,28 @@ body {
     white-space: nowrap;
 }
 
+.mic-indicator {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    width: 15px;
+    height: 15px;
+    background: #FF5797;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mic-indicator.active {
+    opacity: 1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+}
+
 .controls {
     display: flex;
     gap: 10px;

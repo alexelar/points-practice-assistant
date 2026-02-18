@@ -47,6 +47,7 @@ class ExerciseAssistant {
     this.startBtn = document.getElementById("startBtn");
     this.stopBtn = document.getElementById("stopBtn");
     this.statusEl = document.getElementById("status");
+    this.micIndicator = document.getElementById("micIndicator");
     this.cycleCountEl = document.getElementById("cycleCount");
     this.durationEl = document.getElementById("duration");
     this.settingsBtn = document.getElementById("settingsBtn");
@@ -264,11 +265,13 @@ class ExerciseAssistant {
   async listenForVoice() {
     if (!this.isRunning) return false;
     this.updateUI(this.t("listeningForVoice"));
+    this.micIndicator.classList.add("active");
     this.voiceDetected = false;
     this.voiceDetecting = false;
     this.vad.start();
     const result = await this.waitForVoice();
     this.vad.pause();
+    this.micIndicator.classList.remove("active");
     await this.delay(this.settings.postVadDelayMs);
     return result;
   }
