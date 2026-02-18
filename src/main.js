@@ -40,6 +40,7 @@ class ExerciseAssistant {
     ];
     this.audioCache = {};
     this.audioContext = null;
+    this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
   }
 
   initUI() {
@@ -95,6 +96,7 @@ class ExerciseAssistant {
         await this.initVAD();
       }
       await this.requestWakeLock();
+      document.addEventListener("visibilitychange", this.handleVisibilityChange);
       this.isRunning = true;
       this.cycleCount = 0;
       this.sessionStartTime = Date.now();
@@ -157,7 +159,16 @@ class ExerciseAssistant {
     }
   }
 
+  async handleVisibilityChange() {
+    if (document.visibilityState === "visible" && this.isRunning) {
+      if (!this.wakeLock || this.wakeLock.released) {
+        await this.requestWakeLock();
+      }
+    }
+  }
+
   releaseWakeLock() {
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
     if (this.wakeLock) {
       this.wakeLock.release();
       this.wakeLock = null;
