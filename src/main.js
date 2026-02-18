@@ -361,9 +361,12 @@ class ExerciseAssistant {
 
   updateDuration() {
     const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
-    const minutes = Math.floor(elapsed / 60);
+    const hours = Math.floor(elapsed / 3600);
+    const minutes = Math.floor((elapsed % 3600) / 60);
     const seconds = elapsed % 60;
-    this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    this.durationEl.textContent = hours > 0 
+      ? `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+      : `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
   delay(ms) {
