@@ -69,17 +69,17 @@
                 <input type="number" id="shuffleInterval" min="1" max="100" value="3">
             </label>
             <br>
-            <label for="positiveSpeechThreshold"><span data-i18n="positiveSpeechThreshold">Порог обнаружения речи</span>:
-                <input type="number" id="positiveSpeechThreshold" min="0.1" max="1" step="0.05" value="0.85">
+            <label for="positiveSpeechThreshold"><span data-i18n="positiveSpeechThreshold">Порог наличия речи</span>:
+                <input type="number" id="positiveSpeechThreshold" min="0.1" max="1" step="0.05" value="0.6">
             </label>
-            <label for="negativeSpeechThreshold"><span data-i18n="negativeSpeechThreshold">Порог окончания речи</span>:
-                <input type="number" id="negativeSpeechThreshold" min="0.05" max="1" step="0.05" value="0.6">
+            <label for="negativeSpeechThreshold"><span data-i18n="negativeSpeechThreshold">Порог отсутсвия речи</span>:
+                <input type="number" id="negativeSpeechThreshold" min="0.05" max="1" step="0.05" value="0.5">
             </label>
             <label for="minSpeechMs"><span data-i18n="minSpeechMs">Мин. длительность речи (мс)</span>:
                 <input type="number" id="minSpeechMs" min="50" max="3000" step="50" value="200">
             </label>
             <label for="redemptionMs"><span data-i18n="redemptionMs">Макс. пауза в речи (мс)</span>:
-                <input type="number" id="redemptionMs" min="50" max="3000" step="50" value="500">
+                <input type="number" id="redemptionMs" min="50" max="3000" step="50" value="300">
             </label>
             <label for="postVadDelayMs"><span data-i18n="postVadDelayMs">Пауза после обнаружения голоса (мс)</span>:
                 <input type="number" id="postVadDelayMs" min="0" max="3000" step="100" value="0">

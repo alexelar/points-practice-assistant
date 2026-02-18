@@ -15,20 +15,20 @@ export class Settings {
     this.positiveSpeechThreshold =
       localStorage.getItem("positiveSpeechThreshold") !== null
         ? parseFloat(localStorage.getItem("positiveSpeechThreshold"))
-        : 0.85;
+        : 0.6;
     this.negativeSpeechThreshold =
       localStorage.getItem("negativeSpeechThreshold") !== null
         ? parseFloat(localStorage.getItem("negativeSpeechThreshold"))
-        : 0.6;
+        : 0.5;
     this.minSpeechMs =
       localStorage.getItem("minSpeechMs") !== null ? parseInt(localStorage.getItem("minSpeechMs")) : 200;
     this.redemptionMs =
-      localStorage.getItem("redemptionMs") !== null ? parseInt(localStorage.getItem("redemptionMs")) : 500;
+      localStorage.getItem("redemptionMs") !== null ? parseInt(localStorage.getItem("redemptionMs")) : 300;
     this.postVadDelayMs =
       localStorage.getItem("postVadDelayMs") !== null
         ? parseInt(localStorage.getItem("postVadDelayMs"))
         : isAndroid
-          ? 500
+          ? 600
           : 0;
 
     this.settingsModal = document.getElementById("settingsModal");
