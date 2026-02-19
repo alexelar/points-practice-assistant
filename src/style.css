@@ -248,3 +248,9 @@ body {
     background: #1a1a1a;
     color: #fff;
 }
+
+.modal-content select:disabled,
+.modal-content input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

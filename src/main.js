@@ -103,6 +103,7 @@ class ExerciseAssistant {
       this.sessionStartTime = Date.now();
       this.startBtn.disabled = true;
       this.stopBtn.disabled = false;
+      this.settings.setSessionLock(true);
       this.updateUI(this.t("sessionStarted"));
       this.startDurationTimer();
       this.runCycle();
@@ -121,6 +122,7 @@ class ExerciseAssistant {
     this.isRunning = false;
     this.startBtn.disabled = false;
     this.stopBtn.disabled = true;
+    this.settings.setSessionLock(false);
     this.updateUI(this.t("sessionStopped"));
     this.stopDurationTimer();
     this.hideTapOverlay();

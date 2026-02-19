@@ -32,6 +32,13 @@ export class Settings {
           : 0;
 
     this.settingsModal = document.getElementById("settingsModal");
+    this.inputModeEl = document.getElementById("inputMode");
+    this.vadSettingsEls = [
+      document.getElementById("positiveSpeechThreshold"),
+      document.getElementById("negativeSpeechThreshold"),
+      document.getElementById("minSpeechMs"),
+      document.getElementById("redemptionMs"),
+    ];
     this.initEventListeners();
   }
 
@@ -93,5 +100,10 @@ export class Settings {
     localStorage.setItem("postVadDelayMs", this.postVadDelayMs);
 
     this.settingsModal.classList.remove("show");
+  }
+
+  setSessionLock(lock) {
+    this.inputModeEl.disabled = lock;
+    this.vadSettingsEls.forEach(el => el.disabled = lock);
   }
 }
