@@ -143,8 +143,9 @@ class ExerciseAssistant {
       redemptionMs: this.settings.redemptionMs,
       startOnLoad: false,
       onSpeechRealStart: () => {
-        this.updateUI(this.t("voiceDetected"));
         this.voiceDetecting = true;
+        this.micIndicator.classList.add("detecting");
+        this.updateUI(this.t("voiceDetected"));
       },
       onSpeechEnd: () => {
         this.voiceDetected = true;
@@ -272,7 +273,7 @@ class ExerciseAssistant {
     this.vad.start();
     this.micIndicator.classList.add("active");
     const result = await this.waitForVoice();
-    this.micIndicator.classList.remove("active");
+    this.micIndicator.classList.remove("active", "detecting");
     this.vad.pause();
     await this.delay(this.settings.postVadDelayMs);
     return result;

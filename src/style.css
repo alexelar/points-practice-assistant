@@ -13,6 +13,22 @@ body {
     min-height: 100vh;
 }
 
+.primary {
+    color: #6B57FF;
+}
+
+.alert {
+    color: #FF5797;
+}
+
+.success {
+    color: #57FFBF;
+}
+
+.warning {
+    color: #EBFF57;
+}
+
 .container {
     background: #111;
     padding: 30px;
@@ -58,14 +74,18 @@ body {
     top: 30px;
     width: 15px;
     height: 15px;
-    background: #FF5797;
+    background-color: #FF5797;
     border-radius: 50%;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, background-color 0s 0.3s;
 }
 
 .mic-indicator.active {
     opacity: 1;
+}
+
+.mic-indicator.detecting {
+    background-color: #57FFBF;
 }
 
 .controls {
