@@ -146,6 +146,7 @@ class ExerciseAssistant {
         this.voiceDetecting = true;
         this.micIndicator.classList.add("detecting");
         this.updateUI(this.t("voiceDetected"));
+        this.playFeedback();
       },
       onSpeechEnd: () => {
         this.voiceDetected = true;
@@ -374,6 +375,28 @@ class ExerciseAssistant {
 
   delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  playFeedback() {
+    if (this.settings.feedbackType === "none") return;
+    
+    if (this.settings.feedbackType === "vibration" && navigator.vibrate) {
+      navigator.vibrate(this.settings.feedbackDuration * 1000);
+      return;
+    }
+    
+    if (this.settings.feedbackType === "sound") {
+      const osc = this.audioContext.createOscillator();
+      const gain = this.audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+      osc.type = "sine";
+      osc.frequency.value = this.settings.feedbackFrequency;
+      gain.gain.setValueAtTime(this.settings.feedbackVolume, this.audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + this.settings.feedbackDuration);
+      osc.start();
+      osc.stop(this.audioContext.currentTime + this.settings.feedbackDuration);
+    }
   }
 
   updateUI(status) {

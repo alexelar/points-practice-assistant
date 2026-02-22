@@ -30,6 +30,13 @@ export class Settings {
         : isAndroid
           ? 600
           : 0;
+    this.feedbackType = localStorage.getItem("feedbackType") || "sound";
+    this.feedbackFrequency =
+      localStorage.getItem("feedbackFrequency") !== null ? parseInt(localStorage.getItem("feedbackFrequency")) : 800;
+    this.feedbackVolume =
+      localStorage.getItem("feedbackVolume") !== null ? parseFloat(localStorage.getItem("feedbackVolume")) : 0.15;
+    this.feedbackDuration =
+      localStorage.getItem("feedbackDuration") !== null ? parseFloat(localStorage.getItem("feedbackDuration")) : 0.15;
 
     this.settingsModal = document.getElementById("settingsModal");
     this.inputModeEl = document.getElementById("inputMode");
@@ -70,6 +77,10 @@ export class Settings {
     document.getElementById("minSpeechMs").value = this.minSpeechMs;
     document.getElementById("redemptionMs").value = this.redemptionMs;
     document.getElementById("postVadDelayMs").value = this.postVadDelayMs;
+    document.getElementById("feedbackType").value = this.feedbackType;
+    document.getElementById("feedbackFrequency").value = this.feedbackFrequency;
+    document.getElementById("feedbackVolume").value = this.feedbackVolume;
+    document.getElementById("feedbackDuration").value = this.feedbackDuration;
 
     this.settingsModal.classList.add("show");
   }
@@ -86,6 +97,10 @@ export class Settings {
     this.minSpeechMs = parseInt(document.getElementById("minSpeechMs").value);
     this.redemptionMs = parseInt(document.getElementById("redemptionMs").value);
     this.postVadDelayMs = parseInt(document.getElementById("postVadDelayMs").value);
+    this.feedbackType = document.getElementById("feedbackType").value;
+    this.feedbackFrequency = parseInt(document.getElementById("feedbackFrequency").value);
+    this.feedbackVolume = parseFloat(document.getElementById("feedbackVolume").value);
+    this.feedbackDuration = parseFloat(document.getElementById("feedbackDuration").value);
 
     localStorage.setItem("inputMode", this.inputMode);
     localStorage.setItem("sessionMode", this.sessionMode);
@@ -98,6 +113,10 @@ export class Settings {
     localStorage.setItem("minSpeechMs", this.minSpeechMs);
     localStorage.setItem("redemptionMs", this.redemptionMs);
     localStorage.setItem("postVadDelayMs", this.postVadDelayMs);
+    localStorage.setItem("feedbackType", this.feedbackType);
+    localStorage.setItem("feedbackFrequency", this.feedbackFrequency);
+    localStorage.setItem("feedbackVolume", this.feedbackVolume);
+    localStorage.setItem("feedbackDuration", this.feedbackDuration);
 
     this.settingsModal.classList.remove("show");
   }
