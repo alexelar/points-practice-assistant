@@ -59,6 +59,12 @@ class ExerciseAssistant {
     if (this.tapOverlay) {
       this.tapOverlay.addEventListener("click", () => this.handleTap());
     }
+    
+    if ("vibrate" in navigator) {
+      console.log("Vibration API supported");
+    } else {
+      console.log("Vibration API NOT supported");
+    }
     document.getElementById("language").addEventListener("change", (e) => {
       this.settings.changeLanguage(e.target.value);
       this.updateLanguage();
@@ -97,7 +103,8 @@ class ExerciseAssistant {
         await this.initVAD();
       }
       if (this.settings.feedbackType === "vibration" && navigator.vibrate) {
-        navigator.vibrate(100);
+        const vibrated = navigator.vibrate(100);
+        console.log("Vibration test at session start:", vibrated);
       }
       await this.requestWakeLock();
       document.addEventListener("visibilitychange", this.handleVisibilityChange);
@@ -383,8 +390,14 @@ class ExerciseAssistant {
   playFeedback() {
     if (this.settings.feedbackType === "none") return;
     
-    if (this.settings.feedbackType === "vibration" && navigator.vibrate) {
-      navigator.vibrate(this.settings.feedbackDuration * 1000);
+    if (this.settings.feedbackType === "vibration") {
+      if (!navigator.vibrate) {
+        console.log("Vibration not supported");
+        return;
+      }
+      const duration = Math.round(this.settings.feedbackDuration * 1000);
+      const result = navigator.vibrate(duration);
+      console.log(`Vibration called: ${duration}ms, result:`, result);
       return;
     }
     
