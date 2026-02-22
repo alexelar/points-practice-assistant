@@ -210,8 +210,12 @@ class ExerciseAssistant {
       feelCommands.sort(() => Math.random() - 0.5);
     }
 
-    if (this.cycleCount % this.settings.inspectBodyInterval === 1) {
-      commandsToPlay.push(this.commands.inspect);
+    if (this.settings.inspectBodyInterval > 1) {
+      if (this.cycleCount % this.settings.inspectBodyInterval === 1) {
+        commandsToPlay.push(this.commands.inspect);
+      }
+    } else {
+        commandsToPlay.push(this.commands.inspect);
     }
     commandsToPlay.push(this.commands.find);
     if (this.settings.sessionMode !== "short") {
