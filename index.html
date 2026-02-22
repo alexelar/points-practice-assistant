@@ -93,14 +93,14 @@
                     <option value="sound" data-i18n="feedbackSound">Звук</option>
                 </select>
             </label>
+            <label for="feedbackDuration"><span data-i18n="feedbackDuration">Длительность звука/вибрации (сек)</span>:
+                <input type="number" id="feedbackDuration" min="0.05" max="1" step="0.05" value="0.15">
+            </label>
             <label for="feedbackFrequency"><span data-i18n="feedbackFrequency">Частота звука (Гц)</span>:
                 <input type="number" id="feedbackFrequency" min="200" max="2000" step="100" value="800">
             </label>
             <label for="feedbackVolume"><span data-i18n="feedbackVolume">Громкость звука</span>:
                 <input type="number" id="feedbackVolume" min="0.05" max="1" step="0.05" value="0.15">
-            </label>
-            <label for="feedbackDuration"><span data-i18n="feedbackDuration">Длительность звука (сек)</span>:
-                <input type="number" id="feedbackDuration" min="0.05" max="1" step="0.05" value="0.15">
             </label>
             <button id="closeSettings" class="btn btn-primary btn-left" data-i18n="close">Закрыть</button>
         </div>

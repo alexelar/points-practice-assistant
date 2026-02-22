@@ -30,7 +30,7 @@ export class Settings {
         : isAndroid
           ? 600
           : 0;
-    this.feedbackType = localStorage.getItem("feedbackType") || "sound";
+    this.feedbackType = localStorage.getItem("feedbackType") || "none";
     this.feedbackFrequency =
       localStorage.getItem("feedbackFrequency") !== null ? parseInt(localStorage.getItem("feedbackFrequency")) : 800;
     this.feedbackVolume =

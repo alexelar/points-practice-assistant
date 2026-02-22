@@ -96,6 +96,9 @@ class ExerciseAssistant {
       if (this.settings.inputMode === "voice") {
         await this.initVAD();
       }
+      if (this.settings.feedbackType === "vibration" && navigator.vibrate) {
+        navigator.vibrate(100);
+      }
       await this.requestWakeLock();
       document.addEventListener("visibilitychange", this.handleVisibilityChange);
       this.isRunning = true;
