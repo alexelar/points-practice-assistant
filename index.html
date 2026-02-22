@@ -14,7 +14,7 @@
 <body>
     <div class="container">
         <span class="mic-indicator" id="micIndicator"></span>
-        <button id="settingsBtn" class="btn-icon">⋮</button>
+        <button id="settingsBtn" class="btn-icon settings-button">⋮</button>
 
         <div class="status" id="status" data-i18n="readyStatus">Начите сессию</div>
         
@@ -37,8 +37,10 @@
 
     <div id="settingsModal" class="modal">
         <div class="modal-content">
-            <button id="closeSettingsIcon" class="btn-icon modal-close">⨯</button>
-            <h2 data-i18n="settings">Настройки</h2>
+            <div class="modal-header">
+                <h3 data-i18n="settings">Настройки</h3>
+                <button id="closeSettingsIcon" class="btn-icon modal-close">⨯</button>
+            </div>
             <label for="language"><span data-i18n="language">Язык</span>:
                 <select id="language">
                     <option value="en">English</option>
@@ -69,7 +71,7 @@
             <label for="inspectBodyInterval"><span data-i18n="inspectBodyInterval">Интервал команды Осмотри тело (циклы)</span>:
                 <input type="number" id="inspectBodyInterval" min="1" max="100" value="10">
             </label>
-            <br>
+            <hr>
             <label for="postVadDelayMs"><span data-i18n="postVadDelayMs">Пауза после обнаружения голоса (мс)</span>:
                 <input type="number" id="postVadDelayMs" min="0" max="3000" step="100" value="0">
             </label>
@@ -85,7 +87,7 @@
             <label for="redemptionMs"><span data-i18n="redemptionMs">Макс. пауза в речи (мс)</span>:
                 <input type="number" id="redemptionMs" min="50" max="3000" step="50" value="300">
             </label>
-            <br>
+            <hr>
             <label for="feedbackType"><span data-i18n="feedbackType">Обратная связь при обнаружении голоса</span>:
                 <select id="feedbackType">
                     <option value="none" data-i18n="feedbackNone">Нет</option>
@@ -102,7 +104,7 @@
             <label for="feedbackVolume"><span data-i18n="feedbackVolume">Громкость звука</span>:
                 <input type="number" id="feedbackVolume" min="0.05" max="1" step="0.05" value="0.15">
             </label>
-            <button id="closeSettings" class="btn btn-primary btn-left" data-i18n="close">Закрыть</button>
+            <button id="closeSettings" class="btn btn-primary btn-right" data-i18n="close">Закрыть</button>
         </div>
     </div>
     

@@ -40,21 +40,24 @@ body {
     position: relative;
 }
 
-.btn-icon {
+.settings-button {
     position: absolute;
     top: 0;
     right: 0;
+    padding: 10px 15px;
+}
+
+.btn-icon {
     background: none;
     border: none;
     font-size: 24px;
     cursor: pointer;
-    padding: 10px 15px;
-    color: #fff;
+    color: #ffffff;
     transition: color 0.2s;
 }
 
 .btn-icon:hover {
-    color: #fff;
+    color: #eeeeee;
 }
 
 .status {
@@ -127,9 +130,9 @@ body {
     background: #FF579777;
 }
 
-.btn-left {
-    margin-left: auto;
-    display: block;
+.btn-right {
+    float: right;
+    clear: both;
 }
 
 .progress {
@@ -206,7 +209,6 @@ body {
 
 .modal-content {
     background: #111;
-    padding: 30px;
     border-radius: 6px;
     max-width: 400px;
     width: 100%;
@@ -214,6 +216,44 @@ body {
     max-height: 100dvh;
     overflow-y: auto;
     position: relative;
+}
+
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: #111;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #222;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.modal-content > label,
+.modal-content > br,
+.modal-content > button {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.modal-content > label:first-of-type {
+    margin-top: 20px;
+}
+
+.modal-content > button:last-child {
+    margin-bottom: 20px;
+}
+
+.modal-content > hr {
+    height: 1px;
+    background: #222;
+    border: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -236,20 +276,6 @@ body {
 .modal-content {
     scrollbar-width: thin;
     scrollbar-color: #333 #000;
-}
-
-.modal-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-}
-
-.modal-content h3 {
-    margin-bottom: 20px;
 }
 
 .modal-content label {
